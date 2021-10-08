@@ -1,0 +1,84 @@
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url(./dist/public/font/Atkinson-Hyperlegible-Regular-102.ttf) format('truetype');
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url(./dist/public/font/Atkinson-Hyperlegible-Bold-102.ttf) format('truetype');
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url(./dist/public/font/Atkinson-Hyperlegible-Italic-102.ttf) format('truetype');
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Atkinson Hyperlegible';
+    src: url(./dist/public/font/Atkinson-Hyperlegible-BoldItalic-102.ttf) format('truetype');
+    font-weight: bold;
+    font-style: italic;
+}
+
+html {
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+  color: white;
+  text-align: center;
+  font-family: monospace;
+  overflow: hidden;
+  cursor: none;
+}
+
+.root {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template: 20% auto auto / 33% auto 33%;
+}
+
+.time {
+    white-space: pre;
+    margin: 0 0 0 0;
+}
+        
+#fuel-gauge-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+}
+        
+#fuel-gauge {
+    background-color: magenta;
+    width: 50%;
+    height: 0%;
+    position: absolute;
+    bottom: 0;
+}
+
+.content-box {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.true-neutral {
+    align-items: center;
+}
+
+#clock {
+    position: absolute;
+    bottom: 10%;
+}
+
+.indicator {
+    color: gray;
+    margin-top: 10%;
+    margin-bottom: 0;
+}

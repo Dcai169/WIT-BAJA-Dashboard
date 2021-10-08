@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'unsafe-eval' 'self'; img-src 'self'; style-src 'unsafe-inline' 'self';">
+    <meta http-equiv="X-Content-Security-Policy"
+          content="default-src 'unsafe-eval' 'self'; img-src 'self'; style-src 'unsafe-inline' 'self';">
+    <title>WIT BAJA Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="root">
+        <div class="content-box lawful-good">
+            <div>
+                <h3 class="indicator" id="start-mode">START READY</h3>
+                <h3 class="indicator" id="diff-lock">DIFF LOCK</h3>
+            </div>
+        </div>
+        <div class="content-box neutral-good">
+            <h2 id="heading">000</h2>            
+        </div>
+        <div class="content-box chaotic-good">
+            
+        </div>
+
+        <div class="content-box lawful-neutral">
+            
+        </div>
+
+        <div class="content-box true-neutral">
+            <div id="speed-time">
+                <p style="font-size: 80px; margin: 0 0 10px 0;">00mph</p>
+                <h2 id="delta" class="time">±00:00.000</h2>
+                <h2 id="previous" class="time"> 00:00.000</h2>
+                <h2 id="elapsed" class="time"> 00:00.000</h2>
+            </div>
+        </div>
+
+        <div class="content-box chaotic-neutral">
+            <div id="fuel-gauge-container">
+                <div id="fuel-gauge">
+                    <h3 id="fuel-percent">00%</h3>
+                    <h3 id="fuel-estimate">00min</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-box lawful-evil">
+            <div id="clock">
+                <p id="real-date">1 Jan, 1970</p>
+                <p id="real-time">00:00:00</p>
+            </div>
+        </div>
+
+        <div class="content-box neutral-evil">
+
+        </div>
+
+        <div class="content-box chaotic-evil">
+
+        </div>
+    </div>
+</body>
+</html>
