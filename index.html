@@ -8,6 +8,7 @@
           content="default-src 'unsafe-eval' 'self'; img-src 'self'; style-src 'unsafe-inline' 'self';">
     <title>WIT BAJA Dashboard</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="scripts.js" defer></script>
 </head>
 <body>
     <div class="root">
@@ -30,7 +31,7 @@
 
         <div class="content-box true-neutral">
             <div id="speed-time">
-                <p style="font-size: 80px; margin: 0 0 10px 0;">00mph</p>
+                <p id="speed" style="font-size: 80px; margin: 0 0 10px 0;">00km/h</p>
                 <h2 id="delta" class="time">±00:00.000</h2>
                 <h2 id="previous" class="time"> 00:00.000</h2>
                 <h2 id="elapsed" class="time"> 00:00.000</h2>
