@@ -1,12 +1,100 @@
 from flask import Flask, send_file
-from random import randint
 import json
+import time
+
+# Constants
+UPDATE_FREQUENCY = 10 # Hz
+
+LEFT_BUTTON_PIN = 17
+CENTER_BUTTON_PIN = 27
+RIGHT_BUTTON_PIN = 22
+READY_START_PIN = 23
+
+DIFF_SWITCH_PIN = 25
+FUEL_SENSE_PIN = 24
+TOTAL_FUEL_VOLUME = 6000  # mL
+
+mode = 'live'
+uart = None
+gps = None
+
+fuel_sensor = None
+ready_button = None
+diff_switch = None
+
+ready_state = False
+diff_state = False
+
+gps_heading = 0
+gps_speed = 0 # kts
+gps_lock = False
+
+# TODO: persist data over power cycles
+
+current_fuel_volume = 0  # mL
+
+best_time = 0 # milliseconds
+prev_time = 0 # milliseconds
+latest_lap_epoch = 0 # milliseconds
+
+# Update functions
+def update_gps():
+    global gps_heading, gps_speed, gps
+    gps.update()
+    gps_heading = round(gps.track_angle_deg)
+    gps_speed = gps.speed 
+    gps.update()
+
+def update_fuel_volume():
+    global current_fuel_volume
+    if current_fuel_volume >= 2.5:
+        current_fuel_volume -= 2.5
+
+
+def update_ready_state():
+    global ready_state
+    ready_state = not ready_state
+
+
+try:
+    from gpiozero import Button
+    import serial
+    import adafruit_gps
+    from threading import Timer
+
+    ready_button = Button(READY_START_PIN)
+    fuel_sensor = Button(FUEL_SENSE_PIN)
+
+    ready_button.when_pressed = update_ready_state
+    fuel_sensor.when_pressed = update_fuel_volume
+
+    # Initialize GPS
+    uart = serial.Serial("/dev/ttyS0", baudrate=9600, timeout=1/UPDATE_FREQUENCY)
+    gps = adafruit_gps.GPS(uart, debug=False)
+    gps.send_command(b"PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
+
+    Timer(1/UPDATE_FREQUENCY, gps.update).start()
+
+except ImportError:
+    print("GPIO modules could not be imported, running in test mode.")
+    mode = 'test'
+
+    from math import sin
 
 app = Flask(__name__)
 
+@app.before_request
+def check_mode():
+    if mode == 'test':
+        global gps_heading, gps_speed, gps_lock, ready_state, diff_state, current_fuel_volume
+        ready_state = False
+        diff_state = True
 
-def generate_mock_data(lower, upper):
-    return randint(lower, upper)
+        gps_heading = round((sin(time.time()) + 1)/2 * 360) 
+        gps_speed = round((sin(time.time()) + 1)/2 * 45) 
+        gps_lock = True
+
+        current_fuel_volume = round((sin(time.time()) + 1)/2 * TOTAL_FUEL_VOLUME)
 
 
 @app.route("/")
@@ -27,7 +115,10 @@ def scripts():
 @app.route("/api/v1/status")
 def status():
     return app.response_class(
-        response=json.dumps({"status": "ok"}),
+        response=json.dumps({
+            "status": "ok",
+            "mode": mode
+        }),
         mimetype="application/json",
     )
 
@@ -36,25 +127,10 @@ def status():
 def systems():
     return app.response_class(
         response=json.dumps({
-            "gps": {
-                "lock": True,
-                "latitude": 42.3601,
-                "longitude": -71.0589,
-                "altitude": 100,
-                "speed": generate_mock_data(0, 70),
-                "heading": generate_mock_data(0, 360)
-            },
-            "fuel": {
-                "level": generate_mock_data(0, 100),
-                "estimate": generate_mock_data(0, 60)
-            },
-            "time": {
-                "elapsed": generate_mock_data(0, 60000),
-            },
-            "other": {
-                "diff-lock": False,
-                "start-mode": False
-            }
+            "gps": gps(),
+            "fuel": fuel(),
+            "time": timing(),
+            "other": other()
         }),
         mimetype="application/json"
     )
@@ -63,28 +139,25 @@ def systems():
 @app.route("/api/v1/systems/gps")
 def gps():
     return {
-        "lock": True,
-        "latitude": 42.3601,
-        "longitude": -71.0589,
-        "altitude": 100,
-        "speed": generate_mock_data(0, 70),
-        "heading": generate_mock_data(0, 360)
+        "lock": gps_lock,
+        "speed": gps_speed,
+        "heading": gps_heading
     }
 
 
 @app.route("/api/v1/systems/fuel")
 def fuel():
     return {
-        "level": generate_mock_data(0, 100),
-        "estimate": generate_mock_data(0, 60)
+        "level": round(current_fuel_volume/TOTAL_FUEL_VOLUME*100),
+        "volume": current_fuel_volume
     }
 
 
 @app.route("/api/v1/systems/time")
-def time():
+def timing():
     return {
-        time: {
-            "elapsed": generate_mock_data(0, 60000),
+        "timimg": {
+            "elapsed": 0,
         }
     }
 
@@ -92,6 +165,6 @@ def time():
 @app.route("/api/v1/systems/other")
 def other():
     return {
-        "diff_lock": False,
-        "start_mode": False
+        "diff_lock": diff_state,
+        "start_mode": ready_state
     }
