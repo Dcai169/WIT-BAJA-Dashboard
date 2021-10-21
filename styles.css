@@ -77,8 +77,17 @@ html {
     bottom: 10%;
 }
 
+.camouflage {
+    color: black;
+}
+
 .indicator {
     color: gray;
     margin-top: 10%;
     margin-bottom: 0;
+}
+
+p#speed {
+    font-size: 80px; 
+    margin: 0 0 10px 0;
 }
