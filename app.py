@@ -42,7 +42,7 @@ def update_gps():
     global gps_heading, gps_speed, gps
     gps.update()
     gps_heading = round(gps.track_angle_deg)
-    gps_speed = round(gps.speed)
+    gps_speed = round(gps.speed_knots)
     gps.update()
     print("update_gps")
 
