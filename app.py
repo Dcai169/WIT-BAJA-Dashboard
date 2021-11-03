@@ -39,12 +39,12 @@ latest_lap_epoch = 0 # milliseconds
 
 # Update functions
 def update_gps():
-    global gps_heading, gps_speed, gps
+    global gps_heading, gps_speed, gps_lock, gps
     gps.update()
+    gps_lock = gps.has_fix
     gps_heading = round(gps.track_angle_deg) if gps.track_angle_deg is not None else 0
     gps_speed = round(gps.speed_knots) if gps.speed_knots is not None else 0
     gps.update()
-    print("update_gps")
 
 def update_fuel_volume():
     global current_fuel_volume
