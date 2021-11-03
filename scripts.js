@@ -85,7 +85,7 @@ async function run_update() {
     setField('start-mode', apiData.other.start_mode);
     setField('diff-lock', apiData.other.diff_lock);
   }
-  console.log(`Update Time: ${new Date() - dateObj}ms`)
+  console.log(`Update Time: ${1/((new Date() - dateObj)*1000)}Hz`)
 }
 
 window.addEventListener('DOMContentLoaded', () => {

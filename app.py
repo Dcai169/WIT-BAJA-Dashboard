@@ -90,8 +90,8 @@ app = Flask(__name__)
 def check_mode():
     if mode == 'test':
         global gps_heading, gps_speed, gps_lock, ready_state, diff_state, current_fuel_volume
-        ready_state = False
-        diff_state = True
+        ready_state = sin(time.time()) >= 0
+        diff_state = sin(time.time()) >= 0
 
         gps_heading = round((sin(time.time()) + 1)/2 * 360) 
         gps_speed = round((sin(time.time()) + 1)/2 * 45) 
