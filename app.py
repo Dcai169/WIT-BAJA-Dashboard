@@ -44,6 +44,7 @@ def update_gps():
     gps_heading = round(gps.track_angle_deg)
     gps_speed = round(gps.speed)
     gps.update()
+    print("update_gps")
 
 def update_fuel_volume():
     global current_fuel_volume
@@ -72,6 +73,8 @@ try:
     uart = serial.Serial("/dev/ttyS0", baudrate=9600, timeout=10)
     gps = adafruit_gps.GPS(uart, debug=False)
     gps.send_command(b"PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
+
+    gps.update()
 
     Timer(1/UPDATE_FREQUENCY, update_gps).start()
 
