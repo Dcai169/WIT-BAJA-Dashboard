@@ -130,17 +130,17 @@ def status():
 def systems():
     return app.response_class(
         response=json.dumps({
-            "gps": gps(),
-            "fuel": fuel(),
-            "time": timing(),
-            "other": other()
+            "gps": gps_data(),
+            "fuel": fuel_data(),
+            "time": timing_data(),
+            "other": other_data()
         }),
         mimetype="application/json"
     )
 
 
 @app.route("/api/v1/systems/gps")
-def gps():
+def gps_data():
     return {
         "lock": gps_lock,
         "speed": gps_speed,
@@ -149,7 +149,7 @@ def gps():
 
 
 @app.route("/api/v1/systems/fuel")
-def fuel():
+def fuel_data():
     return {
         "level": round(current_fuel_volume/TOTAL_FUEL_VOLUME*100),
         "volume": current_fuel_volume
@@ -157,7 +157,7 @@ def fuel():
 
 
 @app.route("/api/v1/systems/time")
-def timing():
+def timing_data():
     return {
         "timimg": {
             "elapsed": 0,
@@ -166,7 +166,7 @@ def timing():
 
 
 @app.route("/api/v1/systems/other")
-def other():
+def other_data():
     return {
         "diff_lock": diff_state,
         "start_mode": ready_state
