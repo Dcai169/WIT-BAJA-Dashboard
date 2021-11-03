@@ -12,7 +12,7 @@ READY_START_PIN = 23
 
 DIFF_SWITCH_PIN = 25
 FUEL_SENSE_PIN = 24
-TOTAL_FUEL_VOLUME = 6000  # mL
+TOTAL_FUEL_VOLUME = 5680  # mL
 
 mode = 'live'
 uart = None
@@ -42,7 +42,7 @@ def update_gps():
     global gps_heading, gps_speed, gps
     gps.update()
     gps_heading = round(gps.track_angle_deg)
-    gps_speed = gps.speed 
+    gps_speed = round(gps.speed)
     gps.update()
 
 def update_fuel_volume():
@@ -57,23 +57,23 @@ def update_ready_state():
 
 
 try:
-    from gpiozero import Button
+    # from gpiozero import Button
     import serial
     import adafruit_gps
     from threading import Timer
 
-    ready_button = Button(READY_START_PIN)
-    fuel_sensor = Button(FUEL_SENSE_PIN)
+    # ready_button = Button(READY_START_PIN)
+    # fuel_sensor = Button(FUEL_SENSE_PIN)
 
-    ready_button.when_pressed = update_ready_state
-    fuel_sensor.when_pressed = update_fuel_volume
+    # ready_button.when_pressed = update_ready_state
+    # fuel_sensor.when_pressed = update_fuel_volume
 
     # Initialize GPS
-    uart = serial.Serial("/dev/ttyS0", baudrate=9600, timeout=1/UPDATE_FREQUENCY)
+    uart = serial.Serial("/dev/ttyS0", baudrate=9600, timeout=10)
     gps = adafruit_gps.GPS(uart, debug=False)
     gps.send_command(b"PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0")
 
-    Timer(1/UPDATE_FREQUENCY, gps.update).start()
+    Timer(1/UPDATE_FREQUENCY, update_gps).start()
 
 except ImportError:
     print("GPIO modules could not be imported, running in test mode.")
