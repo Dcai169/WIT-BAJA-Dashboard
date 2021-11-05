@@ -5,13 +5,23 @@ import time
 # Constants
 UPDATE_FREQUENCY = 10 # Hz
 
-LEFT_BUTTON_PIN = 17
-CENTER_BUTTON_PIN = 27
-RIGHT_BUTTON_PIN = 22
-READY_START_PIN = 23
+LEFT_BUTTON_PIN = 4 # All buttons are active low
+CENTER_BUTTON_PIN = 17
+RIGHT_BUTTON_PIN = 27
+READY_START_PIN = 22
 
-DIFF_SWITCH_PIN = 25
-FUEL_SENSE_PIN = 24
+NEOPIXEL_PIN = 18
+POWER_BUTTON_PIN = 26
+GPS_FIX_PIN = 25
+
+DIFF_SWITCH_PIN = 23
+FUEL_SENSE_PIN = 24 # Fuel sensor is active high
+
+SPI_MOSI = 10
+SPI_MISO = 9
+SPI_SCLK = 11
+SPI_CE0 = 8
+
 TOTAL_FUEL_VOLUME = 5680  # mL
 
 mode = 'live'
@@ -58,7 +68,8 @@ def update_ready_state():
 
 
 try:
-    # from gpiozero import Button
+    # raise ImportError
+    from gpiozero import Button
     import serial
     import adafruit_gps
     from threading import Timer
