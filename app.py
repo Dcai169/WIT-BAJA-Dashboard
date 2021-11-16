@@ -92,7 +92,7 @@ try:
     from csv import DictWriter
 
     # Log Writer
-    log_file = open(f'{}_log.csv', 'w')
+    log_file = open(f'{time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}_log.csv', 'w')
     log_writer = DictWriter(log_file, fieldnames=['timestamp', 'gps_lock', 'latitude', 'longitude', 'heading', 'speed', 'fuel_volume'])
     log_writer.writeheader()
 
@@ -110,7 +110,7 @@ try:
     gps.update()
 
     Timer(1/UPDATE_FREQUENCY, update_gps).start()
-    Timer(1/UPDATE_FREQUENCY, write_log).start()
+    # Timer(1/UPDATE_FREQUENCY, write_log).start()
 
 except ImportError:
     print("GPIO modules could not be imported, running in test mode.")
