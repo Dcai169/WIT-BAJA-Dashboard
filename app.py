@@ -1,4 +1,7 @@
+from csv import DictWriter
+from os import close
 from flask import Flask, send_file
+from subprocess import call
 import json
 import time
 
@@ -35,6 +38,7 @@ diff_switch = None
 ready_state = False
 diff_state = False
 
+gps_location = {'latitude': 0, 'longitude': 0}
 gps_heading = 0
 gps_speed = 0 # kts
 gps_lock = False
@@ -47,13 +51,18 @@ best_time = 0 # milliseconds
 prev_time = 0 # milliseconds
 latest_lap_epoch = 0 # milliseconds
 
+log_file = None
+log_writer = None
+
 # Update functions
 def update_gps():
     global gps_heading, gps_speed, gps_lock, gps
     gps.update()
     gps_lock = gps.has_fix
+    gps_location['latitude'] = gps.latitude
+    gps_location['longitude'] = gps.longitude
     gps_heading = round(gps.track_angle_deg) if gps.track_angle_deg is not None else 0
-    gps_speed = round(gps.speed_knots) if gps.speed_knots is not None else 0
+    gps_speed = round(gps.speed_knots * 463 / 900) if gps.speed_knots is not None else 0 # 1 knot = 463/900 m/s
     gps.update()
 
 def update_fuel_volume():
@@ -61,11 +70,18 @@ def update_fuel_volume():
     if current_fuel_volume >= 2.5:
         current_fuel_volume -= 2.5
 
-
 def update_ready_state():
     global ready_state
     ready_state = not ready_state
 
+def write_log():
+    global log_writer, current_fuel_volume, gps_heading, gps_speed, gps_lock, gps
+    log_writer.writerow({'timestamp': time.time(), 'gps_lock': gps_lock, 'latitude': gps.latitude, 'longitude': gps.longitude, 'heading': gps_heading, 'speed': gps_speed, 'fuel_volume': current_fuel_volume})
+
+def shutdown(): # TODO: implement
+    global log_file
+    log_file.close()
+    call('sudo shutdown -h now', shell=True)
 
 try:
     # raise ImportError
@@ -73,6 +89,12 @@ try:
     import serial
     import adafruit_gps
     from threading import Timer
+    from csv import DictWriter
+
+    # Log Writer
+    log_file = open(f'{}_log.csv', 'w')
+    log_writer = DictWriter(log_file, fieldnames=['timestamp', 'gps_lock', 'latitude', 'longitude', 'heading', 'speed', 'fuel_volume'])
+    log_writer.writeheader()
 
     # ready_button = Button(READY_START_PIN)
     # fuel_sensor = Button(FUEL_SENSE_PIN)
@@ -88,6 +110,7 @@ try:
     gps.update()
 
     Timer(1/UPDATE_FREQUENCY, update_gps).start()
+    Timer(1/UPDATE_FREQUENCY, write_log).start()
 
 except ImportError:
     print("GPIO modules could not be imported, running in test mode.")
