@@ -1,5 +1,6 @@
 from csv import DictWriter
 from os import close
+import os
 from flask import Flask, send_file
 from subprocess import call
 import json
@@ -30,6 +31,8 @@ TOTAL_FUEL_VOLUME = 5680  # mL
 mode = 'live'
 uart = None
 gps = None
+
+unit_system = os.environ.get('UNITS', 'ANSI')
 
 fuel_sensor = None
 ready_button = None
@@ -128,7 +131,7 @@ def check_mode():
         diff_state = sin(time.time()) >= 0
 
         gps_heading = round((sin(time.time()) + 1)/2 * 360) 
-        gps_speed = round((sin(time.time()) + 1)/2 * 45) 
+        gps_speed = round((sin(time.time()) + 1)/2 * 22.5) 
         gps_lock = True
 
         current_fuel_volume = round((sin(time.time()) + 1)/2 * TOTAL_FUEL_VOLUME)
@@ -153,8 +156,8 @@ def scripts():
 def status():
     return app.response_class(
         response=json.dumps({
-            "status": "ok",
-            "mode": mode
+            "mode": mode,
+            "units": unit_system
         }),
         mimetype="application/json",
     )
