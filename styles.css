@@ -87,7 +87,13 @@ html {
     margin-bottom: 0;
 }
 
-p#speed {
+.focus-text {
     font-size: 80px; 
     margin: 0 0 10px 0;
+    display: inline;
+}
+
+#fuel-text-container {
+    position: relative;
+    bottom: 6.125em;
 }
