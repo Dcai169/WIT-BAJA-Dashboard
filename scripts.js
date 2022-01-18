@@ -89,14 +89,13 @@ async function run_update() {
     setField('start-mode', apiData.other.start_mode);
     setField('diff-lock', apiData.other.diff_lock);
   }
-  console.log(`Update Time: ${(new Date() - dateObj)}ms`)
+  // console.log(`Update Time: ${(new Date() - dateObj)}ms`)
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
   replaceText(RealDateElement, new Date().toLocaleDateString());
 
-  let statusRes = await (await fetch('/api/v1/status')).text()
-  let statusData = JSON.parse(statusRes)
+  let statusData = await (await fetch('/api/v1/status')).json()
 
   if (statusData.mode == 'test') {
     console.log('Running in test mode');

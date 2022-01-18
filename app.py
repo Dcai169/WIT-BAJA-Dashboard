@@ -1,4 +1,3 @@
-from csv import DictWriter
 from os import close
 import os
 from flask import Flask, send_file
@@ -82,8 +81,8 @@ def write_log():
     log_writer.writerow({'timestamp': time.time(), 'gps_lock': gps_lock, 'latitude': gps.latitude, 'longitude': gps.longitude, 'heading': gps_heading, 'speed': gps_speed, 'fuel_volume': current_fuel_volume})
 
 def shutdown(): # TODO: implement
-    global log_file
-    log_file.close()
+    # global log_file
+    # log_file.close()
     call('sudo shutdown -h now', shell=True)
 
 try:
@@ -92,12 +91,12 @@ try:
     import serial
     import adafruit_gps
     from threading import Timer
-    from csv import DictWriter
+    # from csv import DictWriter
 
     # Log Writer
-    log_file = open(f'{time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}_log.csv', 'w')
-    log_writer = DictWriter(log_file, fieldnames=['timestamp', 'gps_lock', 'latitude', 'longitude', 'heading', 'speed', 'fuel_volume'])
-    log_writer.writeheader()
+    # log_file = open(f'{time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}_log.csv', 'w')
+    # log_writer = DictWriter(log_file, fieldnames=['timestamp', 'gps_lock', 'latitude', 'longitude', 'heading', 'speed', 'fuel_volume'])
+    # log_writer.writeheader()
 
     # ready_button = Button(READY_START_PIN)
     # fuel_sensor = Button(FUEL_SENSE_PIN)
